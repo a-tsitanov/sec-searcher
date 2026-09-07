@@ -14,7 +14,7 @@ class InstallerTests(unittest.TestCase):
         self.addCleanup(self.tmp.cleanup)
         self.root = Path(self.tmp.name)
         self.source = self.root / 'source with spaces'
-        for name in ['pyproject.toml', 'uv.lock', 'Dockerfile', 'compose.yaml', 'src/sec_searcher/api.py']:
+        for name in ['pyproject.toml', 'uv.lock', 'Dockerfile', 'compose.yaml', 'compose.metal.yaml', 'src/sec_searcher/api.py']:
             p = self.source / name
             p.parent.mkdir(parents=True, exist_ok=True)
             p.touch()
@@ -22,6 +22,7 @@ class InstallerTests(unittest.TestCase):
         self.bin.mkdir()
         self.log = self.root / 'commands'
         self.stub('docker', 'echo "$*" >> "$INSTALL_LOG"\nexit "${DOCKER_EXIT:-0}"')
+        self.stub('uname', 'if [[ "$1" == -s ]]; then echo Linux; else echo x86_64; fi')
         self.stub('curl', 'echo unexpected-download >> "$INSTALL_LOG"\nexit 99')
         self.env = dict(os.environ, PATH=f'{self.bin}:/usr/bin:/bin', INSTALL_LOG=str(self.log))
 
@@ -40,7 +41,7 @@ class InstallerTests(unittest.TestCase):
         result = self.run_install('--build-only', piped=True)
         self.assertEqual(result.returncode, 0, result.stderr)
         log = self.log.read_text()
-        self.assertIn('compose build app', log)
+        self.assertIn('compose -f compose.yaml build app', log)
         self.assertNotIn('up -d', log)
         self.assertFalse((self.source / 'models').exists())
 
@@ -89,3 +90,22 @@ class InstallerTests(unittest.TestCase):
         result = self.run_install('--model-file', '../bad.gguf')
         self.assertEqual(result.returncode, 2)
         self.assertFalse(self.log.exists())
+
+    def test_metal_auto_selection_and_native_start(self):
+        self.stub('uname', 'if [[ "$1" == -s ]]; then echo Darwin; else echo arm64; fi')
+        helper = self.source / 'scripts/metal.sh'
+        helper.parent.mkdir()
+        helper.write_text('echo "native $*" >> "$INSTALL_LOG"\n')
+        (self.source / 'models').mkdir()
+        (self.source / 'models/custom.gguf').write_bytes(b'model')
+        result = self.run_install('--model-file', 'custom.gguf', '--no-download')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        log = self.log.read_text()
+        self.assertIn('compose -f compose.metal.yaml build app', log)
+        self.assertIn('native start custom.gguf', log)
+        self.assertNotIn('compose -f compose.yaml', log)
+
+    def test_metal_rejects_linux(self):
+        result = self.run_install('--backend', 'metal', '--build-only')
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('Metal requires', result.stderr)

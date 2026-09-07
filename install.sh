@@ -3,18 +3,18 @@
 set -euo pipefail
 
 main() {
-    local repo='' ref='main' target="${HOME}/sec-searcher" source_dir='' build_only=0
+    local repo='' ref='main' target="${HOME}/sec-searcher" source_dir='' build_only=0 backend=auto
     local model='Qwen3.6-35B-A3B-UD-Q3_K_M.gguf' download=1
     local default_model='Qwen3.6-35B-A3B-UD-Q3_K_M.gguf'
     local expected='1b715841683f960bd9a49f008181bd910ee169b78d4cf465b6fde7f4d929ff99'
     local revision='a483e9e6cbd595906af30beda3187c2663a1118c'
     while [[ $# -gt 0 ]]; do
         case "$1" in
-            --repo|--ref|--dir|--source-dir|--model-file)
+            --repo|--ref|--dir|--source-dir|--model-file|--backend)
                 [[ $# -ge 2 && -n "$2" && "$2" != --* ]] || { echo "Missing value for $1" >&2; return 2; }
                 case "$1" in
                     --repo) repo=$2 ;; --ref) ref=$2 ;; --dir) target=$2 ;;
-                    --source-dir) source_dir=$2 ;; --model-file) model=$2 ;;
+                    --source-dir) source_dir=$2 ;; --model-file) model=$2 ;; --backend) backend=$2 ;;
                 esac
                 shift 2 ;;
             --build-only) build_only=1; shift ;;
@@ -29,9 +29,10 @@ Usage: bash install.sh [options]
   --model-file NAME  Existing GGUF filename in models/ (default: Unsloth Qwen3.6 35B Q3)
   --no-download      Require an existing model; never download weights
   --build-only       Build app image only; do not download/load a model or start services
+  --backend MODE     auto (default), metal (Apple Silicon), cpu (Docker llama.cpp)
   --help             Show help
 Requires Docker with Compose v2. Remote installation also needs git.
-Default full install downloads ~16.6 GB of weights and runs CPU llama.cpp.
+Default full install downloads ~16.6 GB; Apple Silicon uses native Metal, others CPU.
 Existing checkouts are reused without git pull or overwriting local changes.
 HELP
                 return 0 ;;
@@ -72,13 +73,24 @@ HELP
         fi
         cd -- "$target"
     fi
+    case "$backend" in auto|metal|cpu) ;; *) echo 'Invalid backend: use auto, metal or cpu.' >&2; return 2 ;; esac
+    if [[ "$backend" == auto ]]; then
+        backend=cpu
+        if [[ "$(uname -s)" == Darwin && "$(uname -m)" == arm64 ]]; then backend=metal; fi
+    fi
+    local compose_file=compose.yaml
+    if [[ "$backend" == metal ]]; then
+        [[ "$(uname -s)" == Darwin && "$(uname -m)" == arm64 ]] || { echo 'Metal requires Apple Silicon macOS.' >&2; return 1; }
+        compose_file=compose.metal.yaml
+    fi
     local file
-    for file in pyproject.toml uv.lock Dockerfile compose.yaml src/sec_searcher/api.py; do
+    for file in pyproject.toml uv.lock Dockerfile "$compose_file" src/sec_searcher/api.py; do
         [[ -f "$file" ]] || { echo "Not a Sec Searcher checkout: missing $file" >&2; return 1; }
     done
     export MODEL_FILE="$model"
-    docker compose config --quiet
-    docker compose build app
+    local compose=(docker compose -f "$compose_file")
+    "${compose[@]}" config --quiet
+    "${compose[@]}" build app
     if [[ "$build_only" == 1 ]]; then
         echo "Build complete: $PWD (services were not started)."
         return 0
@@ -111,11 +123,22 @@ HELP
     fi
     # Separate installer settings preserve an existing .env.
     printf 'MODEL_FILE=%s\n' "$model" > .env.install
-    docker compose --env-file .env.install up -d --wait --wait-timeout 180
+    if [[ "$backend" == metal ]]; then
+        bash scripts/metal.sh start "$model"
+    fi
+    "${compose[@]}" --env-file .env.install up -d --wait --wait-timeout 180
+    if [[ "$backend" == metal ]]; then
+        "${compose[@]}" exec -T app python -c 'import json, urllib.request; o=urllib.request.build_opener(urllib.request.ProxyHandler({})); print(json.load(o.open("http://127.0.0.1:8765/api/models", timeout=10)))'
+    fi
     echo "Installed in: $PWD"
     echo 'Web UI: http://127.0.0.1:8765'
-    echo 'Model loading may take longer; check: docker compose --env-file .env.install logs -f llama'
-    echo 'Stop: docker compose --env-file .env.install down'
+    echo "Backend: $backend"
+    echo "Stop app: docker compose -f $compose_file --env-file .env.install down"
+    if [[ "$backend" == metal ]]; then
+        echo 'Model log: .runtime/metal.log; stop model: bash scripts/metal.sh stop'
+    else
+        echo 'Model loading may take longer; check: docker compose logs -f llama'
+    fi
 }
 
 main "$@"

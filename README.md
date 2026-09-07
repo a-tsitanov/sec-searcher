@@ -6,7 +6,7 @@
 
 ## Быстрый запуск
 
-Проверенное локальное окружение: Python 3.14, macOS / Apple Silicon. Нужны [uv](https://docs.astral.sh/uv/getting-started/installation/) и установленный `llama-server` и GGUF-модель в `models/`. Используем **Qwen3.6-35B-A3B UD-Q3_K_M от Unsloth**; источник и контрольные суммы — в [описании моделей](models/README.md).
+Проверенное локальное окружение: Python 3.14, macOS / Apple Silicon. Нужны [uv](https://docs.astral.sh/uv/getting-started/installation/) установленный `llama-server` и GGUF-модель в `models/`. Используем **Qwen3.6-35B-A3B UD-Q3_K_M от Unsloth**; источник и контрольные суммы — в [описании моделей](models/README.md).
 
 ```sh
 uv sync --locked
@@ -32,9 +32,11 @@ uv run sec-searcher --agent-steps 100
 bash install.sh
 ```
 
-Скрипт проверит Docker / Compose, соберёт приложение через uv, скачает стандартную GGUF-модель (~16.6 ГБ), проверит SHA256 и запустит контейнеры. Нужен уже установленный и запущенный Docker. Повторный запуск использует существующие исходники и веса; `.env` не перезаписывается.
+Скрипт проверит Docker / Compose, соберёт приложение через uv, скачает стандартную GGUF-модель (~16.6 ГБ), проверит SHA256 и запустит сервис. На Apple Silicon автоматически выбирается нативный llama.cpp с Metal, на остальных платформах — CPU-контейнер. Нужен уже установленный и запущенный Docker. Повторный запуск использует существующие исходники и веса; `.env` не перезаписывается.
 
 ```sh
+bash install.sh --backend metal          # macOS Apple Silicon: Metal + FastAPI в Docker
+bash install.sh --backend cpu            # CPU llama.cpp в Docker
 bash install.sh --build-only             # только сборка, без модели и запуска
 bash install.sh --no-download            # использовать существующую стандартную модель
 bash install.sh --model-file custom.gguf --no-download
@@ -51,15 +53,21 @@ curl -fsSL https://raw.githubusercontent.com/a-tsitanov/sec-searcher/main/instal
 
 Для закреплённой версии замените `main` в URL скрипта и `--ref main` одним тегом или SHA коммита. Если репозиторий закрытый, сначала клонируйте его по SSH и запустите `bash install.sh` локально. По умолчанию проект размещается в `~/sec-searcher`; другой каталог задаётся через `--dir`. Существующий checkout повторно используется без обновления и сброса изменений; `--ref` применяется при первой установке.
 
-Полный установщик запускает CPU llama.cpp. Перед запуском освободите порт 8765 и остановите прежнюю модель, если памяти недостаточно для двух экземпляров. Команды после установки:
+Для Metal нужны macOS Apple Silicon и Docker Desktop. Если `llama-server` отсутствует, установщик выполнит `brew install llama.cpp`; Homebrew должен быть установлен заранее. Проверяется наличие Metal-устройства, модель запускается с `--n-gpu-layers 999`. Перед переключением остановите прежние сервисы на портах 8765 и 8080; установщик не завершает чужие процессы. Команды после установки:
 
 ```sh
 cd ~/sec-searcher  # либо каталог, из которого запускали install.sh
-docker compose --env-file .env.install logs -f app llama
-docker compose --env-file .env.install down
+# Metal:
+docker compose -f compose.metal.yaml --env-file .env.install logs -f app
+bash scripts/metal.sh status
+tail -f .runtime/metal.log
+# Остановить оба компонента:
+docker compose -f compose.metal.yaml --env-file .env.install down
+bash scripts/metal.sh stop
+# Для CPU используйте compose.yaml; отдельной остановки нативной модели нет.
 ```
 
-Установщик ждёт готовности приложения; загрузка модели может продолжаться. Полный список параметров: `bash install.sh --help`.
+В режиме Metal установщик ждёт `/health` модели и затем проверяет доступ к ней из приложения. В CPU-режиме ждёт только готовности приложения; загрузка модели может продолжаться. Нативная модель работает в фоне под управлением `launchd` и не запускается автоматически после перезагрузки Mac — повторите установщик или `bash scripts/metal.sh start`. Полный список параметров: `bash install.sh --help`.
 
 ## Docker
 
@@ -70,7 +78,7 @@ docker compose up -d
 
 Файл модели `.gguf` должен уже лежать в `models/`. Для другого имени скопируйте `.env.example` в `.env` и измените `MODEL_FILE`. Интерфейс: **http://127.0.0.1:8765**. Если локальный сервис уже занимает этот порт, сначала остановите его.
 
-Compose запускает сервис и отдельный **CPU**-контейнер llama.cpp. Веса подключаются только для чтения и не попадают в образ. На Apple Silicon для ускорения Metal используйте локальный запуск выше. Сборка требует доступа к реестрам образов и Python-пакетов; модели автоматически не скачиваются.
+Compose запускает сервис и отдельный **CPU**-контейнер llama.cpp. Веса подключаются только для чтения и не попадают в образ. Для Apple Silicon используйте `bash install.sh --backend metal`. Сборка требует доступа к реестрам образов и Python-пакетов; модели автоматически не скачиваются.
 
 ```sh
 docker compose logs -f app llama

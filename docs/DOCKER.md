@@ -57,3 +57,19 @@ Builder использует `uv sync --locked --no-dev --no-editable`. В runti
 ## Проверка миграции на src / FastAPI / uv
 
 7 сентября 2026: `uv sync --locked`, `uv pip check` и Docker-сборка успешны. Все 44 теста прошли на macOS и в Linux-контейнере с установленным пакетом (включая Graphify, FastAPI, ограничения тела запроса и статику). Реальный запуск Uvicorn в контейнере проверен: HTTP 200, OpenAPI-схема, подключение к работающей Qwen и завершение lifespan по SIGTERM. Полный CPU-инференс 35B в Compose не повторялся.
+
+## macOS Apple Silicon / Metal
+
+```sh
+bash install.sh --backend metal
+```
+
+`auto` выбирает Metal на Darwin/arm64. `compose.metal.yaml` содержит только FastAPI; модель запускается нативно через `scripts/metal.sh`. GPU определяется через `llama-server --list-devices`, все доступные слои выгружаются на GPU (`--n-gpu-layers 999`). Сервер модели слушает только `127.0.0.1:8080`, Docker Desktop обращается через `host.docker.internal`. Скрипт проверяет соединение из приложения и сообщает ошибку, если модель недоступна.
+
+[Metal в llama.cpp](https://github.com/ggml-org/llama.cpp/blob/master/docs/build.md#metal-build), [сеть Docker Desktop](https://docs.docker.com/desktop/features/networking/).
+
+Управление моделью: `bash scripts/metal.sh start|stop|status [MODEL_FILE]`. Лог — `.runtime/metal.log`, выбранная модель — `.runtime/metal.model` (не входят в Git/образ). Модель запускается как отдельная задача `launchd`, имя которой привязано к каталогу проекта. Повторный старт проверяет задачу и её готовность; остановка удаляет только эту задачу. Занятый другим сервером порт 8080 приводит к ошибке. После перезагрузки нужен повторный запуск. При ошибке запуска приложения уже загруженная модель остаётся доступной для диагностики; остановить её можно командой `stop`.
+
+Перед переходом с CPU выполните `docker compose --env-file .env.install down`, чтобы не держать две модели в памяти. Для обратного перехода сначала остановите Metal. `docker compose down` сам по себе нативный процесс не останавливает.
+
+Проверено на Apple M4 Pro: модель готова через `/health`, приложение `healthy`, генерация из контейнера завершилась ответом `OK.`. После завершения запуска процесс сохранился в launchd; повторный `start` использовал тот же процесс. Девять тестов установщика прошли. Тестовый короткий ответ не является оценкой качества аудита.
