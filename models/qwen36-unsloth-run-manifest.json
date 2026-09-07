@@ -1,0 +1,34 @@
+{
+  "model": "Qwen/Qwen3.6-35B-A3B",
+  "gguf_repository": "unsloth/Qwen3.6-35B-A3B-GGUF",
+  "revision": "a483e9e6cbd595906af30beda3187c2663a1118c",
+  "filename": "Qwen3.6-35B-A3B-UD-Q3_K_M.gguf",
+  "size_bytes": 16600710112,
+  "sha256": "1b715841683f960bd9a49f008181bd910ee169b78d4cf465b6fde7f4d929ff99",
+  "quantization": "UD-Q3_K_M",
+  "checksum_verified": true,
+  "protocol": "Deep Agents with LocalToolChat JSON adapter",
+  "context_tokens": 16384,
+  "model_output_tokens": 2048,
+  "max_agent_steps": 30,
+  "harness_sha256": {
+    "agent_scan.py": "400c5eb85a4dc3d9eea3f6451a4615258eeafa19edc90b260c780f59b702a700",
+    "local_chat.py": "fe9599c4e64232d056ae4866766c73d2c4d9ce43cef61836a07719c797e10083",
+    "scanner.py": "b2a90bdc7a6d7c26e811b1b4b9bea6db915180f7758cb2248aa3623da44d410a",
+    "evaluate.py": "c6183b762ce6385c6761cf460c7a12425c16f360756dbdffc0f4c1dbb1683285",
+    "requirements.lock.txt": "20fe4a0881461f3139788236837c457b987ff85fa8fc98e324dd3cea718bc06e"
+  },
+  "fixtures": {
+    "tests/fixtures/safe/repository.py": "3578cea3ea9eabb1b565f92f1aac1b9866b11306e9c24baab00ffd0b6a823228",
+    "tests/fixtures/safe/routes.py": "cb4ab1fb438bce67c75d6c767a59fc4599d3d757a12da5fa345812ccb56a1748",
+    "tests/fixtures/vulnerable/repository.py": "7793f35cdb4facd26bc0698f06f5bd502fd57558ef293a85ab6a1279d45f603b",
+    "tests/fixtures/vulnerable/routes.py": "cb4ab1fb438bce67c75d6c767a59fc4599d3d757a12da5fa345812ccb56a1748"
+  },
+  "download_complete": true,
+  "llama_server_alias": "sec-qwen36-unsloth",
+  "evaluation_report": "reports/qwen36-unsloth-evaluation.json",
+  "reasoning": false,
+  "prompt_cache_ram_mib": 0,
+  "llama_cpp": "b9290-bcfd1989e",
+  "launch_command": "llama-server -m models/Qwen3.6-35B-A3B-UD-Q3_K_M.gguf --alias sec-qwen36-unsloth --host 127.0.0.1 --port 8080 -c 16384 -np 1 --jinja --reasoning off --chat-template-kwargs '{\"enable_thinking\":false}' --cache-ram 0"
+}

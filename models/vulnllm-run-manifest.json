@@ -1,0 +1,30 @@
+{
+  "model": "Virtue-AI-HUB/VulnLLM-R-7B",
+  "gguf_repository": "mradermacher/VulnLLM-R-7B-GGUF",
+  "revision": "6ce5015efa4210be17c1c3034ba5dd5ca36d0d63",
+  "filename": "VulnLLM-R-7B.Q5_K_M.gguf",
+  "sha256": "987452d4b09ead07c488f500ee1f8970e6ce47b76a1d7dd72991c76caccfa8cb",
+  "size_bytes": 5444832160,
+  "quantization": "Q5_K_M",
+  "fixtures": {
+    "tests/fixtures/safe/repository.py": "3578cea3ea9eabb1b565f92f1aac1b9866b11306e9c24baab00ffd0b6a823228",
+    "tests/fixtures/safe/routes.py": "cb4ab1fb438bce67c75d6c767a59fc4599d3d757a12da5fa345812ccb56a1748",
+    "tests/fixtures/vulnerable/repository.py": "7793f35cdb4facd26bc0698f06f5bd502fd57558ef293a85ab6a1279d45f603b",
+    "tests/fixtures/vulnerable/routes.py": "cb4ab1fb438bce67c75d6c767a59fc4599d3d757a12da5fa345812ccb56a1748"
+  },
+  "protocol": "Deep Agents with LocalToolChat JSON adapter",
+  "context_tokens": 16384,
+  "model_output_tokens": 2048,
+  "max_agent_steps": 30,
+  "harness_sha256": {
+    "agent_scan.py": "400c5eb85a4dc3d9eea3f6451a4615258eeafa19edc90b260c780f59b702a700",
+    "local_chat.py": "fe9599c4e64232d056ae4866766c73d2c4d9ce43cef61836a07719c797e10083",
+    "scanner.py": "b2a90bdc7a6d7c26e811b1b4b9bea6db915180f7758cb2248aa3623da44d410a",
+    "evaluate.py": "c6183b762ce6385c6761cf460c7a12425c16f360756dbdffc0f4c1dbb1683285",
+    "requirements.lock.txt": "20fe4a0881461f3139788236837c457b987ff85fa8fc98e324dd3cea718bc06e"
+  },
+  "checksum_verified": true,
+  "download_complete": true,
+  "llama_server_alias": "sec-vulnllm-r",
+  "evaluation_report": "reports/vulnllm-evaluation.json"
+}

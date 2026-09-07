@@ -1,0 +1,75 @@
+{
+  "scope": "Preselected non-exhaustive reference set, created before live scan. CWE aliases and equivalent findings require manual review; not an automated exact-CWE score.",
+  "source": "https://github.com/OWASP/NodeGoat/tree/c5cb68a7084e4ae7dcc60e6a98768720a81841e8",
+  "expected": [
+    {
+      "id": "ssjs-eval",
+      "cwe": "CWE-95",
+      "files": [
+        "app/routes/index.js",
+        "app/routes/contributions.js"
+      ],
+      "reason": "HTTP body fields passed to eval before validation; authenticated route."
+    },
+    {
+      "id": "nosql-where",
+      "cwe": "CWE-943",
+      "files": [
+        "app/routes/allocations.js",
+        "app/data/allocations-dao.js"
+      ],
+      "reason": "Query threshold interpolated into MongoDB $where; requires server-side JS support."
+    },
+    {
+      "id": "allocations-idor",
+      "cwe": "CWE-639",
+      "files": [
+        "app/routes/index.js",
+        "app/routes/allocations.js"
+      ],
+      "reason": "Authenticated caller supplies another userId in URL without ownership check."
+    },
+    {
+      "id": "benefits-authorization",
+      "cwe": "CWE-862",
+      "files": [
+        "app/routes/index.js",
+        "app/routes/benefits.js"
+      ],
+      "reason": "Benefits admin operations wired with isLoggedIn but without isAdmin."
+    },
+    {
+      "id": "plaintext-password",
+      "cwe": "CWE-256",
+      "files": [
+        "app/data/user-dao.js"
+      ],
+      "reason": "Registration stores raw password; login compares plaintext."
+    },
+    {
+      "id": "ssrf",
+      "cwe": "CWE-918",
+      "files": [
+        "app/routes/index.js",
+        "app/routes/research.js"
+      ],
+      "reason": "Request query controls URL fetched by needle without destination restriction."
+    },
+    {
+      "id": "redos",
+      "cwe": "CWE-1333",
+      "files": [
+        "app/routes/profile.js"
+      ],
+      "reason": "Nested quantifiers on bankRouting user input allow expensive backtracking."
+    },
+    {
+      "id": "open-redirect",
+      "cwe": "CWE-601",
+      "files": [
+        "app/routes/index.js"
+      ],
+      "reason": "Authenticated /learn route redirects to arbitrary req.query.url."
+    }
+  ]
+}

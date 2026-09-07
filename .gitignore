@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+.venv/
+.env
+reports/
+models/*.gguf
+models/*.part
+.pytest_cache/
+benchmarks/*/upstream/
+benchmarks/*/input/
+benchmarks/*/*.zip
+.env.*
+!.env.example
+.DS_Store
+*.egg-info/
+dist/
+build/

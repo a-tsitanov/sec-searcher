@@ -1,0 +1,13 @@
+# Only package sources and build metadata are sent to Docker.
+**
+!Dockerfile
+!pyproject.toml
+!uv.lock
+!README.md
+!src/
+!src/sec_searcher/
+!src/sec_searcher/*.py
+!src/sec_searcher/web/
+!src/sec_searcher/web/index.html
+!src/sec_searcher/web/app.js
+!src/sec_searcher/web/style.css

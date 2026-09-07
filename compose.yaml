@@ -1,0 +1,48 @@
+name: sec-searcher
+services:
+  app:
+    build: .
+    ports:
+      - "127.0.0.1:8765:8765"
+    command: ["--llama-host", "llama", "--agent-steps", "100", "--max-output-tokens", "8192", "--agent-seconds", "1800"]
+    depends_on:
+      llama:
+        condition: service_started
+    init: true
+    read_only: true
+    tmpfs:
+      - /tmp:size=256m,mode=1777
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+  llama:
+    image: ghcr.io/ggml-org/llama.cpp:server
+    command:
+      - -m
+      - /models/${MODEL_FILE:-Qwen3.6-35B-A3B-UD-Q3_K_M.gguf}
+      - --alias
+      - sec-qwen36-unsloth
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8080"
+      - -c
+      - "32768"
+      - -np
+      - "1"
+      - --jinja
+      - --reasoning
+      - "off"
+      - --chat-template-kwargs
+      - '{"enable_thinking":false}'
+      - --cache-ram
+      - "0"
+    volumes:
+      - type: bind
+        source: ./models
+        target: /models
+        read_only: true
+        bind:
+          create_host_path: false
+    init: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]

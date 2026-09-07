@@ -1,0 +1,203 @@
+{
+  "repository": "https://github.com/OWASP-Benchmark/BenchmarkPython",
+  "revision": "f1291485808b66e20ddb6b01b10dc71b3df8c8ba",
+  "selection": "First true and first false row in upstream CSV for sqli/cmdi/pathtraver/deserialization; selected before inference.",
+  "expected": [
+    {
+      "id": "BenchmarkTest00099",
+      "category": "sqli",
+      "vulnerable": true,
+      "cwe": "CWE-89",
+      "file": "testcode/BenchmarkTest00099.py"
+    },
+    {
+      "id": "BenchmarkTest00011",
+      "category": "sqli",
+      "vulnerable": false,
+      "cwe": "CWE-89",
+      "file": "testcode/BenchmarkTest00011.py"
+    },
+    {
+      "id": "BenchmarkTest00165",
+      "category": "cmdi",
+      "vulnerable": true,
+      "cwe": "CWE-78",
+      "file": "testcode/BenchmarkTest00165.py"
+    },
+    {
+      "id": "BenchmarkTest00350",
+      "category": "cmdi",
+      "vulnerable": false,
+      "cwe": "CWE-78",
+      "file": "testcode/BenchmarkTest00350.py"
+    },
+    {
+      "id": "BenchmarkTest00001",
+      "category": "pathtraver",
+      "vulnerable": true,
+      "cwe": "CWE-22",
+      "file": "testcode/BenchmarkTest00001.py"
+    },
+    {
+      "id": "BenchmarkTest00004",
+      "category": "pathtraver",
+      "vulnerable": false,
+      "cwe": "CWE-22",
+      "file": "testcode/BenchmarkTest00004.py"
+    },
+    {
+      "id": "BenchmarkTest00078",
+      "category": "deserialization",
+      "vulnerable": true,
+      "cwe": "CWE-502",
+      "file": "testcode/BenchmarkTest00078.py"
+    },
+    {
+      "id": "BenchmarkTest00079",
+      "category": "deserialization",
+      "vulnerable": false,
+      "cwe": "CWE-502",
+      "file": "testcode/BenchmarkTest00079.py"
+    }
+  ],
+  "included": [
+    {
+      "file": "testcode/BenchmarkTest00099.py",
+      "sha256": "70a1ae553181b4ea78e6dec87c0c7ca73fdf1a9babbfeec062ea3465a8e64f8c"
+    },
+    {
+      "file": "testcode/BenchmarkTest00011.py",
+      "sha256": "89c30b95eb2bfd6978be29cd0a7f883f006606ce5c958f0747e25e551ac2a7d1"
+    },
+    {
+      "file": "testcode/BenchmarkTest00165.py",
+      "sha256": "11ed0026305523bca64fc4b16190f59e84074a9ff266a64c884ec9b2839457fb"
+    },
+    {
+      "file": "testcode/BenchmarkTest00350.py",
+      "sha256": "52eeea7199c73ff35fdb3e260ed647337df16f962f40a7e5b2e2854eed3c6476"
+    },
+    {
+      "file": "testcode/BenchmarkTest00001.py",
+      "sha256": "be0322edf87adb01228dbf054908e12ce34612e02b722e14384ff5eecb967df6"
+    },
+    {
+      "file": "testcode/BenchmarkTest00004.py",
+      "sha256": "3c6222deb60ce9a389a1cf19222ba5dc246a40b52d640e3f41a1954aa8ee777f"
+    },
+    {
+      "file": "testcode/BenchmarkTest00078.py",
+      "sha256": "db309685c4ed53d0528b1945a445b5157bef866fc334407e9fb7a5884183c52f"
+    },
+    {
+      "file": "testcode/BenchmarkTest00079.py",
+      "sha256": "d762f7d6e76d17f354201f3153172948a85596b520bd18b6afb86342e02901c8"
+    },
+    {
+      "file": "helpers/ThingFactory.py",
+      "sha256": "3397a5ee88decd1f9610f9a76fd8c5134eda17432927a617b9874adf44282164"
+    },
+    {
+      "file": "helpers/db_sqlite.py",
+      "sha256": "24f852d86bce0ccb0752202ee7736e0c60ad21b637ac5032e001cf888f9d6283"
+    },
+    {
+      "file": "helpers/ldap.py",
+      "sha256": "93b08ba6e7c6cf1bc9fa34e29504e6d8fd5e3a94f5a59deb8fb1cf50f7447d23"
+    },
+    {
+      "file": "helpers/resources/ThingFactory.ini",
+      "sha256": "dcad74813a1afd84b377075506713320591668f289e381184de06855960bd766"
+    },
+    {
+      "file": "helpers/resources/context.xml",
+      "sha256": "56407509afea9fce7987f772a40e19c04106c693ddec012e14f6e5003ad10637"
+    },
+    {
+      "file": "helpers/resources/employees.xml",
+      "sha256": "1097244199ecba11b7d68aaed5d5d98bcf41717348b66ee0e3ee090e0bd9f125"
+    },
+    {
+      "file": "helpers/resources/insecureCmd.bat",
+      "sha256": "d3f66f1d67d806f6c50a0ae8ab37d2c17ceb0ec2c8f7f8b1bd5970ffeff75554"
+    },
+    {
+      "file": "helpers/resources/insecureCmd.sh",
+      "sha256": "4e7d07207d24c43793ec857599c626862dc5d0794bfabdd50bc31ea477b5df14"
+    },
+    {
+      "file": "helpers/resources/ldap_info.json",
+      "sha256": "f73e3bb15c8c32d01542be9c84dbb5e81982107e092d1fd25bb93a423bcf8411"
+    },
+    {
+      "file": "helpers/resources/ldap_schema.json",
+      "sha256": "5a9b93e6182578428137f5d985e7053cd94e8f7282ddba287dec4b731af60340"
+    },
+    {
+      "file": "helpers/resources/students.xml",
+      "sha256": "5979611152f0dc9de4192a3b014cef103ba433b4ed946b49bb947d42d03724df"
+    },
+    {
+      "file": "helpers/resources/test.xsd",
+      "sha256": "934de8ab25aa56e5ea22109081ac358298464602f1b55232090bb42ecc461875"
+    },
+    {
+      "file": "helpers/resources/testbook1.xml",
+      "sha256": "93cf173634b9b90f6de72f9706544f94fff3d4e18447067275d90ba6ccd044b5"
+    },
+    {
+      "file": "helpers/resources/xxe.txt",
+      "sha256": "218f22adc670201acf2c9f3332085ee0572a210637a3ab1b53e1d5256285f625"
+    },
+    {
+      "file": "helpers/separate_request.py",
+      "sha256": "89db71030f136a205b52ea1aecec7ffb596efca2721ef91522eea4b2075814a4"
+    },
+    {
+      "file": "helpers/utils.py",
+      "sha256": "48187c68aa234223ad9b8d6b8065fdaa79bcb8c5506539c8d00838bc36fc102e"
+    },
+    {
+      "file": "app.py",
+      "sha256": "1e66534772ea54e7fa0c5ed395fba345c281f697bae2277ad637af779a17aeb7"
+    },
+    {
+      "file": "requirements.txt",
+      "sha256": "d071df9f5084dcb89af43d5e2dd5138460ad010bda4d1ae4b363b60e61876177"
+    }
+  ],
+  "upstream_zip_sha256": "97761539307e95911be4b56d4227bc20b7b9ed479456a7a7a83a334c8f597ec4",
+  "input_zip_sha256": "dff547a58e0e43a9c36c0fdbc9512b6eeaa0724ab8291b3f1a5e099e52842848",
+  "limitations": [
+    "8-case convenience subset; not official Benchmark scoring.",
+    "Labels apply only to each designated CWE, not every possible issue in the file or shared helpers.",
+    "Comments removed with AST equality checked; license docstrings and category-bearing routes retained. Not fully blinded.",
+    "Shared helpers included; templates/test database fixtures omitted. Static review only."
+  ],
+  "scanner_input": {
+    "files": 21,
+    "lines": 1866,
+    "skipped": [
+      {
+        "file": "requirements.txt",
+        "reason": "\u0418\u0441\u043a\u043b\u044e\u0447\u0451\u043d\u043d\u044b\u0439 \u0438\u043b\u0438 \u043d\u0435\u043f\u043e\u0434\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u0435\u043c\u044b\u0439 \u0444\u0430\u0439\u043b"
+      },
+      {
+        "file": "helpers/resources/ThingFactory.ini",
+        "reason": "\u0418\u0441\u043a\u043b\u044e\u0447\u0451\u043d\u043d\u044b\u0439 \u0438\u043b\u0438 \u043d\u0435\u043f\u043e\u0434\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u0435\u043c\u044b\u0439 \u0444\u0430\u0439\u043b"
+      },
+      {
+        "file": "helpers/resources/insecureCmd.bat",
+        "reason": "\u0418\u0441\u043a\u043b\u044e\u0447\u0451\u043d\u043d\u044b\u0439 \u0438\u043b\u0438 \u043d\u0435\u043f\u043e\u0434\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u0435\u043c\u044b\u0439 \u0444\u0430\u0439\u043b"
+      },
+      {
+        "file": "helpers/resources/test.xsd",
+        "reason": "\u0418\u0441\u043a\u043b\u044e\u0447\u0451\u043d\u043d\u044b\u0439 \u0438\u043b\u0438 \u043d\u0435\u043f\u043e\u0434\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u0435\u043c\u044b\u0439 \u0444\u0430\u0439\u043b"
+      },
+      {
+        "file": "helpers/resources/xxe.txt",
+        "reason": "\u0418\u0441\u043a\u043b\u044e\u0447\u0451\u043d\u043d\u044b\u0439 \u0438\u043b\u0438 \u043d\u0435\u043f\u043e\u0434\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u0435\u043c\u044b\u0439 \u0444\u0430\u0439\u043b"
+      }
+    ]
+  }
+}

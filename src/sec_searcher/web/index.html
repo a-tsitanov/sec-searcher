@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sec Searcher — локальная проверка кода</title>
+  <link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script>
+</head>
+<body>
+  <main>
+    <header><a class="brand" href="/">◈ Sec Searcher</a><span class="badge">LOCAL · LLAMA.CPP</span></header>
+    <section class="intro"><p class="eyebrow">БЕЗОПАСНОСТЬ ИСХОДНОГО КОДА</p><h1>Найдите проблемы.<br><span>Оставьте код у себя.</span></h1><p>Загрузите ZIP проекта для проверки локальной моделью. Файлы, строки и рекомендации — в одном отчёте.</p></section>
+    <section class="panel">
+      <form id="scan-form">
+        <label for="archive">ZIP-архив проекта</label><input id="archive" name="archive" type="file" accept=".zip,application/zip" required><small>До 25 МиБ · После распаковки до 32 МиБ · Структура каталогов сохраняется</small>
+        <div class="model-row"><div><label for="model">Модель в llama-server</label><select id="model" name="model" required><option value="">Подключение…</option></select></div><button id="refresh" type="button" class="secondary">Обновить</button></div>
+        <label for="mode">Способ проверки</label><select id="mode"><option value="deep">Deep Agents — поиск по связанным файлам</option><option value="files">Последовательно — отдельные фрагменты файлов</option></select>
+        <p class="muted">Агент выбирает, что прочитать и где искать. Его действия и фактический охват будут видны в отчёте.</p>
+        <div class="actions"><button id="start" type="submit" disabled>Проверить проект ↗</button><button id="cancel" type="button" class="secondary" hidden>Остановить</button></div>
+      </form>
+      <p id="message" role="status" aria-live="polite"></p>
+    </section>
+    <section id="results" hidden>
+      <div class="result-title"><h2 id="status">Проверка</h2><button id="download" class="secondary" type="button">Скачать JSON ↓</button></div>
+      <progress id="progress" max="1" value="0"></progress><p id="detail" class="muted" aria-live="polite"></p>
+      <div id="counts" class="counts"></div>
+      <div class="filter-row"><label for="severity">Критичность</label><select id="severity"><option value="all">Все находки</option><option value="critical">Критическая</option><option value="high">Высокая</option><option value="medium">Средняя</option><option value="low">Низкая</option></select></div>
+      <div id="findings"></div>
+      <p id="agent-summary" class="muted"></p>
+      <details id="events-box" hidden><summary>Действия агента</summary><ul id="events"></ul></details>
+      <details id="coverage-box" hidden><summary>Охват и ограничения</summary><ul id="coverage"></ul></details>
+      <details id="errors-box" hidden><summary id="errors-title"></summary><ul id="errors"></ul></details>
+      <details id="skipped-box" hidden><summary id="skipped-title"></summary><ul id="skipped"></ul></details>
+    </section>
+    <footer>Находки модели требуют проверки. Прочитанный файл не означает доказанную безопасность: учитывайте охват, ошибки и ограничения отчёта.</footer>
+  </main>
+</body>
+</html>
