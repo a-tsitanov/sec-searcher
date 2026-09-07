@@ -100,7 +100,7 @@ $('scan-form').addEventListener('submit', async event=>{
   finally {submitting=false;controls();}
 });
 $('cancel').addEventListener('click',async()=>{
-  try {await api('/api/cancel',{});$('cancel').disabled=true;$('message').textContent='Остановка после текущего ответа модели (до 180 секунд).';}
+  try {await api('/api/cancel',{});$('cancel').disabled=true;$('message').textContent='Остановка после текущего ответа модели. В агентном режиме ожидание может занять до 12 минут.';}
   catch(error){$('message').textContent=error.message;}
 });
 $('refresh').addEventListener('click',models);

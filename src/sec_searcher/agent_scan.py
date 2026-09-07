@@ -431,7 +431,7 @@ def build_agent(model, view, update, cancelled, max_steps=MAX_STEPS, max_seconds
 
 
 def scan_agent(project, model_name, client, update, cancelled, *, max_steps=MAX_STEPS, max_seconds=MAX_SECONDS, protocol='json',
-               graphify=False, managed_traversal=False, max_output_tokens=8192, request_timeout=360):
+               graphify=False, managed_traversal=False, max_output_tokens=16384, request_timeout=720):
     if type(max_steps) is not int or not 1 <= max_steps <= 500:
         raise ValueError('Лимит шагов агента должен быть от 1 до 500')
     if type(max_output_tokens) is not int or not 256 <= max_output_tokens <= 16384:
@@ -464,12 +464,12 @@ def scan_agent(project, model_name, client, update, cancelled, *, max_steps=MAX_
         if protocol == 'json':
             from sec_searcher.local_chat import LocalToolChat
             chat = LocalToolChat(model_name=model_name, llama_client=client, max_tokens=max_output_tokens,
-                                 request_timeout=request_timeout, profile={'max_input_tokens': 12000})
+                                 request_timeout=request_timeout, profile={'max_input_tokens': 32768})
         elif protocol == 'native':
             chat = ChatOpenAI(model=model_name, base_url=client.base + '/v1', api_key='local',
                           temperature=0, max_tokens=max_output_tokens, timeout=request_timeout, max_retries=0,
                           http_client=transport, use_responses_api=False,
-                          profile={'max_input_tokens': 12000},
+                          profile={'max_input_tokens': 32768},
                           model_kwargs={'parallel_tool_calls': False},
                           # Local conservative estimate avoids downloading a tokenizer.
                           custom_get_token_ids=lambda text: list(text.encode('utf-8')))

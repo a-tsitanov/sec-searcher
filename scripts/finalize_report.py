@@ -46,8 +46,8 @@ def finalize(record, archive, client):
         if validated['evidence'] != finding['evidence']:
             raise ValueError('Saved evidence differs from the source snapshot')
         view.remember(validated)
-    chat = LocalToolChat(model_name=record['model'], llama_client=client, max_tokens=8192,
-                         request_timeout=360, profile={'max_input_tokens': 12000})
+    chat = LocalToolChat(model_name=record['model'], llama_client=client, max_tokens=16384,
+                         request_timeout=720, profile={'max_input_tokens': 32768})
     agent, limits = build_agent(chat, view, update, lambda: False, max_steps=3,
                                 max_seconds=600, report_only=True)
     prompt = ('Finish the saved review by calling submit_report with findings=[] to preserve every saved finding. '
@@ -71,7 +71,7 @@ def finalize(record, archive, client):
     report['status'] = 'partial' if report['errors'] else 'done'
     report['finalization'] = {'mode': 'saved_findings_only', 'steps': limits.steps,
                                'seconds': round(time.monotonic() - started, 2), 'events': events,
-                               'max_output_tokens': 8192, 'findings_unchanged': True}
+                               'max_output_tokens': 16384, 'findings_unchanged': True}
     report['events'].extend(e | {'step': previous['agent_steps'] + e['step'], 'stage': 'report_finalization'} for e in events)
     report['agent_steps'] = previous['agent_steps'] + limits.steps
     report['finished_at'] = datetime.now(timezone.utc).isoformat()

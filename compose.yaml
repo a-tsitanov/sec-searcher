@@ -4,7 +4,7 @@ services:
     build: .
     ports:
       - "127.0.0.1:8765:8765"
-    command: ["--llama-host", "llama", "--agent-steps", "100", "--max-output-tokens", "8192", "--agent-seconds", "1800"]
+    command: ["--llama-host", "llama", "--agent-steps", "100", "--max-output-tokens", "16384", "--agent-seconds", "1800"]
     depends_on:
       llama:
         condition: service_started
@@ -26,9 +26,15 @@ services:
       - --port
       - "8080"
       - -c
-      - "32768"
+      - "65536"
       - -np
       - "1"
+      - --flash-attn
+      - "on"
+      - --cache-type-k
+      - q8_0
+      - --cache-type-v
+      - q8_0
       - --jinja
       - --reasoning
       - "off"

@@ -25,6 +25,9 @@ main() {
             [[ -f .runtime/metal.model && "$(cat .runtime/metal.model)" == "$model" ]] || {
                 echo 'A different managed model is running; stop it first.' >&2; return 1;
             }
+            [[ -f .runtime/metal.context && "$(cat .runtime/metal.context)" == 65536-q8_0 ]] || {
+                echo 'Context settings changed; run bash scripts/metal.sh stop, then rerun installation.' >&2; return 1;
+            }
             curl --noproxy '*' -fsS --max-time 5 http://127.0.0.1:8080/health >/dev/null || {
                 echo 'Managed model is not ready; see .runtime/metal.log.' >&2; return 1;
             }
@@ -51,9 +54,11 @@ main() {
     devices=$("$binary" --list-devices 2>&1)
     [[ "$devices" == *Metal* || "$devices" == *MTL[0-9]* ]] || { echo 'This llama-server has no available Metal device.' >&2; return 1; }
     printf '%s\n' "$model" > .runtime/metal.model
+    printf '65536-q8_0\n' > .runtime/metal.context
     launchctl submit -l "$label" -o "$root/.runtime/metal.log" -e "$root/.runtime/metal.log" -- \
         "$binary" -m "$root/models/$model" --alias sec-qwen36-unsloth \
-        --host 127.0.0.1 --port 8080 -c 32768 -np 1 --n-gpu-layers 999 \
+        --host 127.0.0.1 --port 8080 -c 65536 -np 1 --n-gpu-layers 999 \
+        --flash-attn on --cache-type-k q8_0 --cache-type-v q8_0 \
         --jinja --reasoning off --chat-template-kwargs '{"enable_thinking":false}' \
         --cache-ram 0
     for i in {1..180}; do

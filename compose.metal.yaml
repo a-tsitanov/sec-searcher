@@ -4,7 +4,7 @@ services:
     build: .
     ports:
       - "127.0.0.1:8765:8765"
-    command: ["--llama-host", "host.docker.internal", "--agent-steps", "100", "--max-output-tokens", "8192", "--agent-seconds", "1800"]
+    command: ["--llama-host", "host.docker.internal", "--agent-steps", "100", "--max-output-tokens", "16384", "--agent-seconds", "1800"]
     init: true
     read_only: true
     tmpfs:

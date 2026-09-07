@@ -12,7 +12,7 @@ def main():
     parser.add_argument('--llama-host', default='127.0.0.1', help='Хост llama-server, например llama в Docker Compose')
     parser.add_argument('--llama-port', type=int, default=8080)
     parser.add_argument('--agent-steps', type=int, default=30, help='Лимит шагов Deep Agents (1–500)')
-    parser.add_argument('--max-output-tokens', type=int, default=8192, help='Максимум токенов ответа модели (256–16384)')
+    parser.add_argument('--max-output-tokens', type=int, default=16384, help='Максимум токенов ответа модели (256–16384)')
     parser.add_argument('--agent-seconds', type=int, default=1800, help='Бюджет времени агента (60–7200 секунд)')
     parser.add_argument('--no-graphify', action='store_true', help='Отключить граф для сравнительного прогона')
     parser.add_argument('--no-managed-traversal', action='store_true', help='Оставить обход только на усмотрение модели')

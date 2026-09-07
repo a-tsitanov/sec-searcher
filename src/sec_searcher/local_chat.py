@@ -17,8 +17,8 @@ from langchain_core.utils.function_calling import convert_to_openai_tool
 class LocalToolChat(BaseChatModel):
     model_name: str
     llama_client: Any
-    max_tokens: int = 8192
-    request_timeout: int = 360
+    max_tokens: int = 16384
+    request_timeout: int = 720
 
     @property
     def _llm_type(self):

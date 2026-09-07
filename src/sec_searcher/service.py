@@ -11,7 +11,7 @@ from sec_searcher.archives import extract_project
 
 class State:
     def __init__(self, client, default_mode='deep', agent_steps=30, graphify=True, managed_traversal=True,
-                 max_output_tokens=8192, agent_seconds=1800):
+                 max_output_tokens=16384, agent_seconds=1800):
         if type(agent_steps) is not int or not 1 <= agent_steps <= 500:
             raise ValueError('Лимит шагов агента должен быть от 1 до 500')
         self.client = client
